@@ -1,0 +1,566 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>🐍 Python趣味学习乐园</title><style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0f0f23;--card:#1a1a3e;--card2:#222255;--primary:#00d4ff;--secondary:#7c3aed;--accent:#f59e0b;--success:#10b981;--danger:#ef4444;--text:#e0e0ff;--text2:#8888bb;--gradient:linear-gradient(135deg,#00d4ff,#7c3aed);--radius:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:70px}
+.container{max-width:920px;margin:0 auto;padding:8px}
+.header{text-align:center;padding:12px 0 8px}
+.header h1{font-size:22px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.header .sub{font-size:11px;color:var(--text2);margin-top:2px}
+.xp-bar,.s-bar{background:var(--card);border-radius:var(--radius);padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.xp-bar .lvl-badge{background:var(--gradient);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;min-width:38px;text-align:center;flex-shrink:0}
+.xp-bar .track{flex:1;height:6px;background:var(--card2);border-radius:3px;overflow:hidden}
+.xp-bar .fill{height:100%;background:var(--gradient);border-radius:3px;width:0%;transition:width 0.5s}
+.xp-bar .xp-num{font-size:10px;color:var(--text2);white-space:nowrap;flex-shrink:0}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:8px}
+.tab-btn{padding:6px 2px;border:2px solid transparent;border-radius:var(--radius);background:var(--card);color:var(--text2);font-size:10px;cursor:pointer;text-align:center;font-weight:600;position:relative;font-family:inherit}
+.tab-btn.active,.stb.active{background:var(--card2);border-color:var(--primary);color:var(--primary)}
+.tab-btn .badge{background:var(--danger);color:#fff;font-size:8px;padding:1px 5px;border-radius:8px;position:absolute;top:-4px;right:-4px;display:none}
+.tab-btn .tab-icon{font-size:14px;display:block}
+.section{display:none}.section.active,.stb.active{display:block}
+.card{background:var(--card);border-radius:var(--radius);padding:12px;margin-bottom:8px}
+.sec-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sec-header .sh-title{font-size:13px;font-weight:700}
+.sec-header .sh-info{font-size:10px;color:var(--text2)}
+.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:8px}
+@media(min-width:600px){.stat-row{grid-template-columns:repeat(4,1fr)}}
+.stat-item{text-align:center;padding:8px;background:var(--card2);border-radius:8px}
+.stat-item .si-num{font-size:18px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-item .si-label{font-size:9px;color:var(--text2);margin-top:1px}
+.level-selector{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.level-btn{padding:4px 10px;border-radius:6px;border:2px solid var(--card2);background:var(--card2);color:var(--text2);cursor:pointer;font-weight:600;font-size:11px;font-family:inherit}
+.level-btn.active{border-color:var(--primary);color:var(--primary);background:rgba(0,212,255,0.08)}
+.level-btn .lv-cnt{font-size:8px;color:var(--text2);display:block;opacity:.7}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;margin:0 3px 4px 0}
+.tag-type{background:rgba(124,58,237,0.2);color:var(--secondary)}
+.tag-level{background:rgba(245,158,11,0.2);color:var(--accent)}
+.quiz-opt{padding:10px 12px;background:var(--card2);border:2px solid transparent;border-radius:8px;cursor:pointer;color:var(--text);font-size:13px;margin-bottom:6px;user-select:none}
+.quiz-opt:active{transform:scale(.98)}
+.quiz-opt.correct{border-color:var(--success);background:rgba(16,185,129,0.15);color:var(--success)}
+.quiz-opt.wrong{border-color:var(--danger);background:rgba(239,68,68,0.15);color:var(--danger)}
+.quiz-opt .opt-label{font-weight:700;margin-right:6px;color:var(--primary)}
+.code-block{background:#0a0a1a;border-radius:8px;padding:10px 12px;font-family:'Courier New',monospace;font-size:12px;line-height:1.6;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin-bottom:8px}
+.quiz-feedback{padding:10px 12px;border-radius:6px;display:none;line-height:1.5;margin-top:8px;font-size:13px}.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3)}
+.quiz-feedback.wrong{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3)}
+.fb-xp{font-size:11px;color:var(--accent);margin-top:4px}
+.fb-exp{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:12px;line-height:1.6;color:var(--text)}
+.fb-exp .fb-e-t{font-weight:600;color:var(--primary);font-size:11px;margin-bottom:2px}
+.blank-code{background:#0a0a1a;border-radius:8px;padding:10px 12px;font-family:'Courier New',monospace;font-size:12px;line-height:1.8;margin-bottom:8px}
+.blank-code .blank-slot{display:inline-block;min-width:60px;border-bottom:2px dashed var(--primary);color:var(--primary);padding:0 4px;cursor:pointer;font-weight:700;text-align:center}
+.blank-code .blank-slot.filled{border-bottom-style:solid;border-color:var(--success);color:var(--success)}
+.blank-code .blank-slot.wrong{border-color:var(--danger);color:var(--danger);text-decoration:line-through}
+.blank-options{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 8px}
+.blank-opt{padding:5px 12px;background:var(--card2);border:1px solid rgba(255,255,255,0.1);border-radius:6px;cursor:pointer;font-size:12px;color:var(--text);user-select:none}
+.blank-opt:active{transform:scale(.95)}
+.blank-opt.selected{background:var(--primary);color:#000;border-color:var(--primary);font-weight:700}
+.match-play-area{display:flex;flex-direction:column;gap:8px}
+@media(min-width:600px){.match-play-area{flex-direction:row}}
+.match-col{display:flex;flex-direction:column;gap:4px;flex:1}
+.match-col-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:2px;padding:3px 6px;background:var(--card2);border-radius:4px;display:inline-block}
+.match-card{padding:8px 10px;background:var(--card2);border:2px solid transparent;border-radius:8px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;min-height:36px;display:flex;align-items:center;justify-content:center;user-select:none;font-family:inherit}
+.match-card:active{transform:scale(.97)}
+.match-card.selected{border-color:var(--primary);background:rgba(0,212,255,0.12)}
+.match-card.matched{border-color:var(--success);background:rgba(16,185,129,0.15);pointer-events:none;color:var(--success)}
+.match-card.wrong-anim{border-color:var(--danger);background:rgba(239,68,68,0.2);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}}
+.fix-code{background:#0a0a1a;border-radius:8px;padding:10px 12px;font-family:'Courier New',monospace;font-size:12px;line-height:1.8;margin-bottom:8px}
+.fix-input{width:100%;padding:8px 10px;background:var(--card2);border:2px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--text);font-family:'Courier New',monospace;font-size:12px;outline:none}
+.fix-input:focus{border-color:var(--primary)}
+.ex-grid{display:grid;grid-template-columns:1fr;gap:6px}
+.ex-card{background:var(--card2);border-radius:10px;overflow:hidden;border:2px solid transparent}
+.ex-card.expanded{border-color:rgba(0,212,255,0.25)}
+.ex-card-header{padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:8px}
+.ex-card-header .ech-icon{font-size:18px;flex-shrink:0}
+.ex-card-header .ech-info{flex:1;min-width:0}
+.ex-card-header .ech-title{font-weight:600;font-size:13px;margin-bottom:1px}
+.ex-card-header .ech-desc{font-size:10px;color:var(--text2)}
+.ex-card-header .ech-arrow{font-size:10px;color:var(--text2);transition:transform .2s;flex-shrink:0}
+.ex-card.expanded .ech-arrow{transform:rotate(180deg)}
+.ex-card-body{display:none;padding:0 12px 10px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px}
+.ex-card.expanded .ex-card-body{display:block}
+.ex-code-block{background:#0a0a1a;border-radius:6px;padding:8px 10px;font-family:'Courier New',monospace;font-size:11px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;margin-bottom:6px}
+.ex-output{background:rgba(0,0,0,0.3);border-radius:6px;padding:8px 10px;font-family:'Courier New',monospace;font-size:11px;min-height:18px;white-space:pre-wrap;color:#b0b0dd;line-height:1.4;display:none}
+.ex-tags{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.ex-tag{padding:1px 6px;border-radius:3px;font-size:9px}
+.ex-tag.lv{background:rgba(245,158,11,0.15);color:var(--accent)}
+.ex-tag.cat{background:rgba(124,58,237,0.15);color:var(--secondary)}
+.ex-output.show{display:block}
+.progress-dots{display:flex;gap:2px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--card2)}
+.dot.correct{background:var(--success)}.dot.wrong{background:var(--danger)}.dot.current{box-shadow:0 0 4px var(--primary)}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;justify-content:center;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--gradient);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-danger{background:var(--danger);color:#fff}.btn-sm{padding:5px 10px;font-size:11px;border-radius:5px}.btn-block{width:100%;justify-content:center}
+.wrong-item{padding:8px 10px;background:var(--card2);border-radius:6px;margin-bottom:6px;cursor:pointer;border:2px solid rgba(239,68,68,0.25)}
+.wrong-item .wi-title{font-weight:600;font-size:12px;margin-bottom:2px}
+.wrong-item .wi-meta{font-size:10px;color:var(--text2)}
+.wrong-item .wi-badge{float:right;font-size:9px;padding:1px 6px;border-radius:4px;background:rgba(239,68,68,0.15);color:var(--danger)}
+.empty-state{text-align:center;padding:30px 0;color:var(--text2)}.empty-state .empty-icon{font-size:40px;display:block;margin-bottom:8px}
+.nojs{text-align:center;padding:16px;margin:10px 0;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;font-size:13px;color:var(--text2)}
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;z-index:1000;display:none;max-width:90%;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.toast.show{display:block;animation:toastIn .3s}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-15px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.toast.success{background:var(--success);color:#fff}.toast.error{background:var(--danger);color:#fff}.toast.info{background:var(--card);border:1px solid var(--primary);color:var(--primary)}
+</style></head><body>
+<div class="container">
+<div class="header"><h1>🐍 Python 趣味学习乐园</h1><div class="sub">多种趣味模式 · 轻松掌握</div></div>
+<div class="xp-bar"><div class="lvl-badge" id="lvlBadge">Lv.1</div><div class="track"><div class="fill" id="xpFill" style="width:0%"></div></div><div class="xp-num" id="xpText">0/100 XP</div></div>
+<div class="stat-row"><div class="stat-item"><div class="si-num" id="totalAnswered">0</div><div class="si-label">总答题</div></div><div class="stat-item"><div class="si-num" id="correctRate">0%</div><div class="si-label">正确率</div></div><div class="stat-item"><div class="si-num" id="wrongCount">0</div><div class="si-label">错题数</div></div><div class="stat-item"><div class="si-num" id="xpTotal">0</div><div class="si-label">总经验</div></div></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="st('quiz')"><span class="tab-icon">🧠</span>闯关</button>
+<button class="tab-btn" onclick="st('fill')"><span class="tab-icon">✍️</span>填空</button>
+<button class="tab-btn" onclick="st('match')"><span class="tab-icon">🔗</span>配对</button>
+<button class="tab-btn" onclick="st('fix')"><span class="tab-icon">🔧</span>纠错</button>
+<button class="tab-btn" onclick="st('wrong')">📕错题<span class="badge" id="wrongBadge">0</span></button>
+</div>
+<div class="card" style="cursor:pointer" onclick="te()">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:13px;font-weight:700">📚 Python 示例库 <span style="font-size:10px;color:var(--text2);font-weight:400">（展开查看）</span></div>
+<span style="font-size:11px;color:var(--text2)" id="etl">展开 ▸</span>
+</div></div>
+<div id="es" style="display:none"><div class="card"><div class="level-selector" id="exl"></div><div id="exg" class="ex-grid"></div></div></div>
+
+<div class="section active" id="s-quiz"><div class="card">
+<div class="sec-header"><div class="sh-title">🎯 代码闯关</div><div class="sh-info" id="qp">0/0 题</div></div>
+<div class="level-selector" id="qls"></div>
+<div id="qtg"><span class="tag tag-type">📌数据类型</span><span class="tag tag-level">📊入门</span></div>
+<div style="margin-bottom:6px;font-size:12px;color:var(--text2)" id="qq">第1/0题：以下代码输出什么？</div>
+<div class="code-block" id="qc">print(type(42))</div>
+<div id="qos"><div class="quiz-opt"><span class="opt-label">A</span> <class "int"></div><div class="quiz-opt"><span class="opt-label">B</span> <class "float"></div><div class="quiz-opt"><span class="opt-label">C</span> 42</div><div class="quiz-opt"><span class="opt-label">D</span> int</div></div>
+<div class="quiz-feedback" id="qfb"></div>
+<div class="progress-dots" id="qdt"></div>
+<div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-primary" style="flex:1;display:none" id="qnb" onclick="qn()">下一题 →</button><button class="btn btn-outline btn-sm" onclick="qr()">🔄 换一批</button></div>
+<noscript><div class="nojs">⚠️ 需要 JavaScript 才能完整交互。无障碍浏览模式已展示示例内容。</div></noscript>
+</div></div>
+
+<div class="section" id="s-fill"><div class="card">
+<div class="sec-header"><div class="sh-title">✍️ 代码填空</div><div class="sh-info" id="fp">0/0 题</div></div>
+<div class="level-selector" id="fls"></div>
+<div id="ftg"><span class="tag tag-type">📌运算符</span><span class="tag tag-level">📊入门</span></div>
+<div style="margin-bottom:6px;font-size:12px;color:var(--text2)" id="fq">第1/0题：补全加法</div>
+<div class="blank-code" id="fc">10 <span class="blank-slot">?</span> 3</div>
+<div class="blank-options" id="fop"><div class="blank-opt">+</div><div class="blank-opt">-</div><div class="blank-opt">*</div><div class="blank-opt">/</div></div>
+<button class="btn btn-primary btn-block" id="fsb" onclick="fc2()">✅ 提交答案</button>
+<div class="quiz-feedback" id="ffb"></div>
+<div class="progress-dots" id="fdt"></div>
+<div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-primary" style="flex:1;display:none" id="fnb" onclick="fn()">下一题 →</button><button class="btn btn-outline btn-sm" onclick="fr()">🔄 换一批</button></div>
+</div></div>
+
+<div class="section" id="s-match"><div class="card">
+<div class="sec-header"><div class="sh-title">🔗 趣味配对</div><div class="sh-info" id="mp2">0/0</div></div>
+<div class="level-selector" id="mls"></div>
+<div style="margin-bottom:6px;font-size:12px;color:var(--text2)">点击代码再点描述完成配对</div>
+<div class="match-play-area" id="ma"><div class="match-col"><div class="match-col-label">💻 代码</div>
+<div class="match-card">print()</div><div class="match-card">len()</div><div class="match-card">type()</div><div class="match-card">int()</div><div class="match-card">str()</div></div>
+<div class="match-col"><div class="match-col-label">📝 描述</div>
+<div class="match-card">输出到控制台</div><div class="match-card">获取长度</div><div class="match-card">获取类型</div><div class="match-card">转整数</div><div class="match-card">转字符串</div></div></div>
+<div style="margin-top:8px"><button class="btn btn-primary btn-sm" onclick="mr()">🔄 重新洗牌</button></div>
+</div></div>
+
+<div class="section" id="s-fix"><div class="card">
+<div class="sec-header"><div class="sh-title">🔧 代码纠错</div><div class="sh-info" id="xp2">0/0 题</div></div>
+<div class="level-selector" id="xls"></div>
+<div id="xtg"><span class="tag tag-type">📌语法</span><span class="tag tag-level">📊入门</span></div>
+<div style="margin-bottom:6px;font-size:12px;color:var(--text2)" id="xq">第1/0题：请修正代码中的错误</div>
+<div class="fix-code" id="xc"><pre style="margin:0;font-family:inherit;font-size:inherit;line-height:1.6">print("Hello World)</pre></div>
+<div style="margin-bottom:6px"><input class="fix-input" id="xi" placeholder="输入正确的代码..."></div>
+<button class="btn btn-primary btn-block" id="xsb" onclick="xc2()">✅ 提交修正</button>
+<div class="quiz-feedback" id="xfb"></div>
+<div class="progress-dots" id="xdt"></div>
+<div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-primary" style="flex:1;display:none" id="xnb" onclick="xn()">下一题 →</button><button class="btn btn-outline btn-sm" onclick="xr()">🔄 换一批</button></div>
+</div></div>
+
+<div class="section" id="s-wrong"><div class="card">
+<div class="sec-header"><div class="sh-title">📕 错题本</div><div class="sh-info" id="wi2">共 0 题</div></div>
+<div id="wl"><div class="empty-state"><span class="empty-icon">🎉</span><p>暂无错题，继续保持！</p></div></div>
+<button class="btn btn-danger btn-block" id="cwb" style="display:none;margin-top:8px" onclick="cw()">🗑 清空错题本</button>
+</div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+function $(id){return document.getElementById(id)}
+function eh(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function sh(a){for(var i=a.length-1;i>0;i--){var j=Math.random()*(i+1)|0;var t=a[i];a[i]=a[j];a[j]=t}return a}
+function ts(m,t){var o=$('toast');o.textContent=m;o.className='toast '+(t||'info')+' show';clearTimeout(o._t);o._t=setTimeout(function(){o.classList.remove('show')},2000)}
+var LV=['入门','基础','进阶','高阶'];
+function qe(sel){return document.querySelectorAll(sel)}
+if(!String.prototype.includes){String.prototype.includes=function(s){return this.indexOf(s)!==-1}}
+
+var xp=parseInt(localStorage.getItem('p9_xp'))||0,lv=parseInt(localStorage.getItem('p9_lv'))||1;
+var tA=parseInt(localStorage.getItem('p9_ta'))||0,cC=parseInt(localStorage.getItem('p9_cc'))||0;
+var ws=JSON.parse(localStorage.getItem('p9_ws')||'[]');
+var qDone=JSON.parse(localStorage.getItem('p9_qd')||'{}');
+var fDone=JSON.parse(localStorage.getItem('p9_fd')||'{}');
+var xDone=JSON.parse(localStorage.getItem('p9_xd')||'{}');
+function markDone(t,i){if(t==='q'){qDone[i]=1;localStorage.setItem('p9_qd',JSON.stringify(qDone))}else if(t==='f'){fDone[i]=1;localStorage.setItem('p9_fd',JSON.stringify(fDone))}else{xDone[i]=1;localStorage.setItem('p9_xd',JSON.stringify(xDone))}}
+function up(){var p=Math.min((xp%100)/100*100,100);$('xpFill').style.width=p+'%';$('xpText').textContent=(xp%100)+'/100 XP';$('lvlBadge').textContent='Lv.'+lv;localStorage.setItem('p9_xp',xp);localStorage.setItem('p9_lv',lv);$('totalAnswered').textContent=tA;$('correctRate').textContent=tA>0?Math.round(cC/tA*100)+'%':'0%';$('wrongCount').textContent=ws.length;$('xpTotal').textContent=xp;var b=$('wrongBadge');b.style.display=ws.length?'inline':'none';b.textContent=ws.length;$('wi2').textContent='共 '+ws.length+' 题';}
+function ax(a){xp+=a;while(xp>=lv*100){xp-=lv*100;lv++;ts('🎉升级啦！Lv.'+lv,'success')}up()}
+function rc(c){tA++;if(c)cC++;localStorage.setItem('p9_ta',tA);localStorage.setItem('p9_cc',cC);up()}
+function aw(t,i,d){if(!ws.some(function(w){return w.t===t&&w.i===i})){ws.push({t:t,i:i,d:d,ts:Date.now()});sw()}}
+function rw(t,i){ws=ws.filter(function(w){return !(w.t===t&&w.i===i)});sw()}
+function sw(){localStorage.setItem('p9_ws',JSON.stringify(ws));up()}
+function cw(){if(!ws.length)return;if(!confirm('确定清空所有错题？'))return;ws=[];sw();rw2();ts('已清空','info')}
+function dt(id,total,cur){var max=Math.min(total,100),h='';for(var i=0;i<max;i++)h+='<div class="dot '+(i===cur?'current':'')+'"></div>';document.getElementById(id).innerHTML=h}
+function ud(id,idx,ok){var d=document.querySelectorAll('#'+id+' .dot');if(d[idx]){d[idx].classList.add(ok?'correct':'wrong');d[idx].classList.remove('current')}if(d[idx+1])d[idx+1].classList.add('current')}
+function st(t){var sa=document.querySelectorAll('.section');for(var i=0;i<sa.length;i++)sa[i].classList.remove('active');$('s-'+t).classList.add('active');var tb=['quiz','fill','match','fix','wrong'];var ta=document.querySelectorAll('.tab-btn');for(var i=0;i<ta.length;i++){ta[i].classList.toggle('active',tb[i]===t)};if(t==='quiz')rq();else if(t==='fill')rf();else if(t==='match')rm();else if(t==='fix')rx();else if(t==='wrong')rw2();}
+
+var eo=false,el='入门';
+var ed=[{t:'Hello World',d:'最简单的 Python 程序',c:'print("Hello, World!")',r:'Hello, World!',l:'入门'},{t:'变量与类型',d:'变量和基本数据类型',c:'name = "小明"\nage = 18\nheight = 1.75\nis_student = True\n\nprint(f"姓名: {name}")\nprint(f"年龄: {age}")\nprint(f"身高: {height}")',r:'姓名: 小明\n年龄: 18\n身高: 1.75',l:'入门'},{t:'条件判断',d:'if-elif-else 结构',c:'score = 85\nif score >= 90:\n    grade = "A"\nelif score >= 80:\n    grade = "B"\nelif score >= 70:\n    grade = "C"\nelif score >= 60:\n    grade = "D"\nelse:\n    grade = "E"\nprint(f"分数: {score}, 等级: {grade}")',r:'分数: 85, 等级: B',l:'基础'},{t:'循环遍历',d:'for 和 while 循环',c:'fruits = ["苹果", "香蕉", "橘子"]\nfor fruit in fruits:\n    print(f"水果: {fruit}")\n\ncount = 0\nwhile count < 3:\n    print(f"计数: {count}")\n    count += 1',r:'水果: 苹果\n水果: 香蕉\n水果: 橘子\n计数: 0\n计数: 1\n计数: 2',l:'基础'},{t:'函数定义',d:'定义和调用函数',c:'def greet(name, greeting="你好"):\n    return f"{greeting}, {name}!"\n\nprint(greet("小明"))\nprint(greet("小红", "Hello"))',r:'你好, 小明!\nHello, 小红!',l:'进阶'},{t:'列表推导式',d:'优雅的列表生成',c:'squares = [x**2 for x in range(10)]\nprint(f"平方数: {squares}")\nevens = [x for x in range(20) if x % 2 == 0]\nprint(f"偶数: {evens}")',r:'平方数: [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]\n偶数: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]',l:'高阶'},{t:'九九乘法表',d:'嵌套循环',c:'for i in range(1, 10):\n    for j in range(1, i+1):\n        print(f"{j}x{i}={i*j}", end=" ")\n    print()',r:'1x1=1 \n1x2=2 2x2=4 \n1x3=3 2x3=6 3x3=9 \n1x4=4 2x4=8 3x4=12 4x4=16 \n1x5=5 2x5=10 3x5=15 4x5=20 5x5=25 \n1x6=6 2x6=12 3x6=18 4x6=24 5x6=30 6x6=36 \n1x7=7 2x7=14 3x7=21 4x7=28 5x7=35 6x7=42 7x7=49 \n1x8=8 2x8=16 3x8=24 4x8=32 5x8=40 6x8=48 7x8=56 8x8=64 \n1x9=9 2x9=18 3x9=27 4x9=36 5x9=45 6x9=54 7x9=63 8x9=72 9x9=81',l:'基础'}];
+function te(){eo=!eo;$('es').style.display=eo?'block':'none';$('etl').textContent=eo?'收起 ▾':'展开 ▸';if(eo)ei()}
+function ei(){var h='';LV.forEach(function(n){h+='<button class="level-btn '+(n===el?'active':'')+'" onclick="el=\''+n+'\';ei()">'+n+'<span class="lv-cnt">'+ed.filter(function(e){return e.l===n}).length+'个</span></button>'});$('exl').innerHTML=h;er()}
+function er(){var p=ed.filter(function(e){return e.l===el});if(!p.length){$('exg').innerHTML='<div style="text-align:center;padding:15px;color:var(--text2)">暂无</div>';return}$('exg').innerHTML=p.map(function(e,idx){var oi=ed.indexOf(e);return '<div class="ex-card" id="ec'+oi+'"><div class="ex-card-header" onclick="document.getElementById(\'ec'+oi+'\').classList.toggle(\'expanded\')"><div class="ech-icon">📄</div><div class="ech-info"><div class="ech-title">'+e.t+'</div><div class="ech-desc">'+e.d+'</div></div><div class="ech-arrow">▼</div></div><div class="ex-card-body"><div class="ex-code-block">'+eh(e.c)+'</div><div class="ex-tags"><span class="ex-tag lv">'+e.l+'</span><span class="ex-tag cat">示例</span></div><button class="btn btn-sm btn-primary" onclick="re('+oi+')">▶ 运行查看效果</button><div class="ex-output" id="eo'+oi+'"></div></div></div>'}).join('')}
+function re(i){var e=ed[i],o=$('eo'+i);if(!o)return;o.classList.add('show');o.textContent=e.r;ts('已显示','success')}
+
+// ====== 题库分片载入(避免单行过长导致解析失败) ======
+function _q(c,a,o,t,l,e){var os=[].concat(o);sh(os);var na=os.indexOf(o[a]);return{c:c,a:na,o:os,t:t,l:l,exp:e}}
+
+// r0: 入门80题
+var r0=[
+['print(type(42))',0,['<class "int">','<class "float">','42','int'],'数据类型','type()返回对象类型。'],
+['print(10+5)',0,['15','105','10+5','错误'],'运算符','10+5=15。'],
+['print(10-5)',0,['5','10-5','-5','错误'],'运算符','10-5=5。'],
+['print(3*7)',0,['21','37','10','错误'],'运算符','3×7=21。'],
+['print(10/3)',0,['3.333...','3','3.0','1'],'运算符','除法得浮点数。'],
+['print(10//3)',0,['3','3.33','3.0','1'],'运算符','整除取整。'],
+['print(10%3)',0,['1','3','0','错误'],'运算符','取余。'],
+['print(2**3)',0,['8','6','23','错误'],'运算符','2³=8。'],
+['print(bool(1))',0,['True','False','1','None'],'布尔值','非零为真。'],
+['print(bool(0))',1,['False','True','0','None'],'布尔值','0为假。'],
+['x=5;print(x+3)',0,['8','53','x+3','错误'],'变量','x+3=8。'],
+['print(2**10)',0,['1024','20','1000','错误'],'运算符','2¹⁰=1024。'],
+['print(7-3)',0,['4','73','-4','错误'],'运算符','7-3=4。'],
+['print(not True)',1,['False','True','None','错误'],'布尔值','not取反。'],
+['print(not False)',0,['True','False','None','错误'],'布尔值','not False=True。'],
+['print(100-99)',0,['1','10099','-1','错误'],'运算符','100-99=1。'],
+['print(8*8)',0,['64','88','16','错误'],'运算符','8×8=64。'],
+['print(25/5)',0,['5.0','5','25/5','错误'],'运算符','25/5=5.0。'],
+['print(7//2)',0,['3','3.5','2','错误'],'运算符','7//2=3。'],
+['print(7%2)',0,['1','2','0','错误'],'运算符','7%2=1。'],
+['print(True+True)',0,['2','True','False','错误'],'布尔值','True=1。'],
+['print(3+False)',0,['3','True','False','错误'],'运算符','False=0。'],
+['print(100-1)',0,['99','1001','-99','错误'],'运算符','100-1=99。'],
+['print(12*2)',0,['24','122','14','错误'],'运算符','12×2=24。'],
+['print(6*7)',0,['42','67','13','错误'],'运算符','6×7=42。'],
+['print(11+9)',0,['20','119','2','错误'],'运算符','11+9=20。'],
+['print(13-8)',0,['5','138','-5','错误'],'运算符','13-8=5。'],
+['print(4*5)',0,['20','45','9','错误'],'运算符','4×5=20。'],
+['print(5+2*3)',0,['11','21','10','错误'],'运算符','先乘后加。'],
+['print((5+2)*3)',0,['21','11','17','错误'],'运算符','括号优先。'],
+['print(5>2)',0,['True','False','5','错误'],'比较','5>2。'],
+['print(3>7)',0,['False','True','3','错误'],'比较','3>7。'],
+['print(4<=4)',0,['True','False','4','错误'],'比较','4≤4。'],
+['print(10!=9)',0,['True','False','10','错误'],'比较','10≠9。'],
+['print(True or False)',0,['True','False','None','错误'],'逻辑','or一真即真。'],
+['print(False and True)',1,['False','True','None','错误'],'逻辑','and一假即假。'],
+['print(True and True)',0,['True','False','None','错误'],'逻辑','全真才真。'],
+['print(50-25)',0,['25','5025','-25','错误'],'运算符','50-25=25。'],
+['print(30/5)',0,['6.0','6','25','错误'],'运算符','30÷5=6.0。'],
+['print(15/4)',0,['3.75','3','4','错误'],'运算符','15÷4=3.75。'],
+['print(10*2)',0,['20','12','102','错误'],'运算符','10×2=20。'],
+['print(9-4)',0,['5','13','-5','错误'],'运算符','9-4=5。'],
+['print(6+7)',0,['13','67','6+7','错误'],'运算符','6+7=13。'],
+['print(20/4)',0,['5.0','5','4','错误'],'运算符','20÷4=5.0。'],
+['print(10-2*3)',0,['4','24','16','错误'],'运算符','先乘后减。'],
+['print(2*(3+4))',0,['14','10','6','错误'],'运算符','括号优先。'],
+['print(10/2)',0,['5.0','5','2','错误'],'运算符','10÷2=5.0。'],
+['print(3*9)',0,['27','12','9','错误'],'运算符','3×9=27。'],
+['print(36/6)',0,['6.0','6','30','错误'],'运算符','36÷6=6.0。'],
+['print(20//6)',0,['3','2','14','错误'],'运算符','20//6=3。'],
+['print(20%6)',0,['2','3','14','错误'],'运算符','20%6=2。'],
+['print(10*0)',0,['0','10','1','错误'],'运算符','乘0得0。'],
+['print(-5+3)',0,['-2','2','-8','错误'],'运算符','-5+3=-2。'],
+['print(3-8)',0,['-5','5','-11','错误'],'运算符','3-8=-5。'],
+['print(bool("a"))',0,['True','False','"a"','错误'],'布尔值','非空为真。'],
+['print(bool(0.0))',1,['False','True','0.0','错误'],'布尔值','0.0为假。'],
+['print(True==1)',0,['True','False','1','错误'],'比较','True=1。'],
+['print(False==0)',0,['True','False','0','错误'],'比较','False=0。'],
+['print(True!=1)',1,['False','True','1','错误'],'比较','True=1所以!=为假。'],
+['print("A"=="a")',1,['False','True','A','错误'],'比较','大小写敏感。'],
+['name="Py";print("Hi "+name)',0,['Hi Py','Hi name','Hi+Py','错误'],'字符串','变量拼接。'],
+['print("ab"+"cd")',0,['abcd','ab cd','ab+cd','错误'],'字符串','拼接。'],
+['print("x"*5)',0,['xxxxx','x5','5x','错误'],'字符串','重复5次。'],
+['print("!"*3)',0,['!!!','!3','3!','错误'],'字符串','重复3次。'],
+['print("ab"*2)',0,['abab','ab2','2ab','错误'],'字符串','重复2次。'],
+['x=5;print(x)',0,['5','x','None','错误'],'变量','变量x=5。'],
+['x=3;y=4;print(x+y)',0,['7','34','xy','错误'],'变量','3+4=7。'],
+['print(15+3*2)',0,['21','36','30','错误'],'运算符','先乘后加。'],
+['print((15+3)*2)',0,['36','21','30','错误'],'运算符','括号优先。'],
+['not(5>3)',1,['False','True','None','错误'],'逻辑','5>3为真取反。'],
+['print(6>=4)',0,['True','False','6','错误'],'比较','6≥4。'],
+['print(2!=2)',1,['False','True','2','错误'],'比较','2=2所以!=为假。'],
+['print("ab"in"abc")',0,['True','False','ab','错误'],'成员','子串。'],
+['x=[1,2];print(len(x))',0,['2','1','0','错误'],'列表','长度2。'],
+['print(int(5.9))',0,['5','6','5.9','错误'],'类型转换','截断取整。'],
+['print(True or True)',0,['True','False','None','错误'],'逻辑','True or True=True。'],
+['print(False or False)',1,['False','True','None','错误'],'逻辑','全假才假。']];
+// r1: 基础80题
+var r1=[
+['x=[1,2,3];print(len(x))',2,['1','2','3','[1,2,3]'],'列表','len返回长度。'],
+['s="Python";print(len(s))',0,['6','5','7','Python'],'字符串','6个字符。'],
+['print("Hello"[0])',0,['H','e','l','Hello'],'字符串','索引0。'],
+['print("Hello"[-1])',0,['o','l','H','错误'],'字符串','最后一个。'],
+['print("Hello"[1:3])',0,['el','ell','Hel','llo'],'切片','切片1:3。'],
+['x=[1,2,3];x.append(4);print(x)',0,['[1,2,3,4]','[4,1,2,3]','[1,2,3]','错误'],'列表','append添加。'],
+['x=[3,1,2];x.sort();print(x)',0,['[1,2,3]','[3,2,1]','[3,1,2]','错误'],'列表','sort排序。'],
+['5>3',0,['True','False','5','错误'],'比较','5>3。'],
+['5<3',1,['False','True','5','错误'],'比较','5<3。'],
+['5==5',0,['True','False','5','错误'],'比较','==相等。'],
+['5!=3',0,['True','False','5','3'],'比较','!=不等。'],
+['True and True',0,['True','False','None','错误'],'逻辑','全真才真。'],
+['True and False',1,['False','True','None','错误'],'逻辑','一假即假。'],
+['True or False',0,['True','False','None','错误'],'逻辑','一真即真。'],
+['False or False',1,['False','True','None','错误'],'逻辑','全假才假。'],
+['"a"in"abc"',0,['True','False','a','错误'],'成员','in检查。'],
+['"d"in"abc"',1,['False','True','d','错误'],'成员','不在其中。'],
+['x=[1,2,3];print(2 in x)',0,['True','False','2','错误'],'成员','2在列表中。'],
+['x=[1,2,3];print(5 in x)',1,['False','True','5','错误'],'成员','5不在。'],
+['list(range(5))',0,['[0,1,2,3,4]','[1,2,3,4,5]','[0,1,2,3,4,5]','错误'],'range','0~4。'],
+['list(range(2,5))',0,['[2,3,4]','[2,3,4,5]','[2,3,4]','[3,4,5]'],'range','2~4。'],
+['3==3',0,['True','False','3','错误'],'比较','相等。'],
+['3!=3',1,['False','True','3','错误'],'比较','3=3。'],
+['10>20',1,['False','True','10','20'],'比较','不成立。'],
+['10<20',0,['True','False','10','20'],'比较','成立。'],
+['len("")',0,['0','1','None','错误'],'字符串','空串长度0。'],
+['len([1,2,3,4,5])',0,['5','4','6','错误'],'列表','5个元素。'],
+['max([1,5,3])',0,['5','3','1','错误'],'内置','最大值。'],
+['min([1,5,3])',1,['1','3','5','错误'],'内置','最小值。'],
+['sum([1,2,3])',0,['6','3','123','错误'],'内置','1+2+3=6。'],
+['abs(-3)',0,['3','-3','0','错误'],'内置','绝对值。'],
+['round(3.6)',0,['4','3','3.6','错误'],'内置','四舍五入。'],
+['int(3.99)',0,['3','4','3.99','错误'],'类型转换','截断取整。'],
+['float(3)',0,['3.0','3','3.00','错误'],'类型转换','转浮点。'],
+['x=[1,2,3];print(x[0])',0,['1','2','3','错误'],'列表','索引0。'],
+['x=[1,2,3];print(x[-1])',2,['1','2','3','错误'],'列表','最后一个。'],
+['x=[1,2,3];x.insert(0,0);print(x)',0,['[0,1,2,3]','[1,2,3,0]','[0,0,1,2,3]','错误'],'列表','insert插入。'],
+['"hi"*2+"!"',0,['hihi!','hi2!','hihi','错误'],'字符串','字符串乘法。'],
+['[1,2,3].index(2)',0,['1','2','0','错误'],'列表','index查找。'],
+['x=[1,2,3];x.pop();print(x)',0,['[1,2]','[2,3]','[1,3]','错误'],'列表','pop弹出。'],
+['list("abc")',0,["['a','b','c']","['abc']",'abc','错误'],'列表','转列表。'],
+['",".join(["a","b","c"])',0,['a,b,c','abc','a b c','错误'],'字符串','join合并。'],
+['"ab"in"abcde"',0,['True','False','ab','错误'],'成员','子串。'],
+['"z"in"abc"',1,['False','True','z','错误'],'成员','不在。'],
+['x=[1,2,3];print(x[1])',0,['2','1','3','错误'],'列表','第二个。'],
+['x=[5,2,8,1];x.sort();print(x[0])',0,['1','2','5','8'],'列表','最小。'],
+['1+2*3',0,['7','9','5','错误'],'运算符','先乘后加。'],
+['(1+2)*3',0,['9','7','6','错误'],'运算符','括号优先。'],
+['24//5',0,['4','5','19','错误'],'运算符','24//5=4。'],
+['24%5',0,['4','5','1','错误'],'运算符','24%5=4。'],
+['4**2',0,['16','8','6','错误'],'运算符','4²=16。'],
+['"Hello"[2]',2,['H','e','l','o'],'字符串','第三个字符l。'],
+['max(5,2,8)',0,['8','5','2','错误'],'内置','最大值。'],
+['min(5,2,8)',1,['2','5','8','错误'],'内置','最小值。'],
+['abs(-10)',0,['10','-10','0','错误'],'内置','绝对值。'],
+['pow(3,2)',0,['9','6','32','错误'],'内置','3²=9。'],
+['round(2.4)',0,['2','3','2.4','错误'],'内置','四舍五入。'],
+['3>3',1,['False','True','3','错误'],'比较','3不大于3。'],
+['3>=3',0,['True','False','3','错误'],'比较','3≥3。'],
+['chr(65)',0,['A','65','a','错误'],'字符串','ASCII码。'],
+['ord("A")',0,['65','A','1','错误'],'字符串','A的ASCII。'],
+['"Hello".lower()',0,['hello','Hello','HELLO','错误'],'字符串','转小写。'],
+['"Hello".upper()',0,['HELLO','hello','Hello','错误'],'字符串','转大写。'],
+['not(5!=5)',0,['True','False','5','错误'],'逻辑','5!=5假取反。'],
+['x=[1,2,3,4];print(x[1:3])',0,['[2,3]','[1,2]','[3,4]','错误'],'切片','取索引1到2。'],
+['x=[1,2,3,4];print(x[:2])',0,['[1,2]','[2,3]','[1,2,3]','错误'],'切片','从头取。'],
+['"Hello".endswith("o")',0,['True','False','Hello','错误'],'字符串','以o结尾。'],
+['"Python".startswith("P")',0,['True','False','Python','错误'],'字符串','以P开头。'],
+['x=[1,2,3];x.clear();print(len(x))',0,['0','3','None','错误'],'列表','清空长度0。'],
+['10>5 and 5<10',0,['True','False','None','错误'],'逻辑','两个都真。'],
+['1>2 or 2>1',0,['True','False','2','错误'],'逻辑','一个为真。'],
+['def add(a,b):return a+b\\nprint(add(3,4))',0,['7','34','add(3,4)','错误'],'函数','函数返回7。'],
+['d={"a":1,"b":2};print(d["a"])',0,['1','2','a','错误'],'字典','字典按键取值。'],
+['d={"a":1,"b":2};print(d.get("c",0))',0,['0','None','c','错误'],'字典','键不存在返回0。'],
+['a=10;b=20;print(a if a>b else b)',0,['20','10','True','错误'],'表达式','取b=20。'],
+['x=[1,2,3];y=x;y.append(4);print(x)',0,['[1,2,3,4]','[1,2,3]','[4,1,2,3]','错误'],'引用','引用赋值。'],
+['sum([1,2,3,4,5])',0,['15','5','12345','错误'],'内置','和15。'],
+['str(123)',0,['123','123(字符串)','int','错误'],'类型','数字转字符串。'],
+['int("45")+5',0,['50','455','"455"','错误'],'类型','45+5=50。'],
+['"-".join(["a","b","c"])',0,['a-b-c','abc','a b c','错误'],'字符串','用-连接。'],
+['pow(2,3)',0,['8','6','23','错误'],'内置','2³=8。'],
+['"  hello  ".strip()',0,['hello','  hello  ','Hello','错误'],'字符串','strip去空格。'],
+['d={"x":10};d["y"]=20;print(len(d))',0,['2','1','3','错误'],'字典','长度2。'],
+['"123".isdigit()',0,['True','False','123','错误'],'字符串','isdigit数字。'],
+['"abc".isalpha()',0,['True','False','abc','错误'],'字符串','isalpha字母。']];
+// r2: 进阶80题
+var r2=[
+['x=[1,2];print(x*3)',0,['[1,2,1,2,1,2]','[3,6]','[1,2,3]','错误'],'列表','重复。'],
+['x=[1,2,3];x.extend([4,5]);print(x)',0,['[1,2,3,4,5]','[1,2,3,[4,5]]','[4,5,1,2,3]','错误'],'列表','extend合并。'],
+['x=[1,2,3];x.remove(2);print(x)',0,['[1,3]','[1,2]','[2,3]','错误'],'列表','remove删除。'],
+['"hello".replace("l","L")',0,['heLLo','hello','helLo','错误'],'字符串','replace替换。'],
+['x=[1,2];y=[3,4];print(x+y)',0,['[1,2,3,4]','[4,6]','[1,2,3,4]','错误'],'列表','拼接。'],
+['sorted([3,1,2])',0,['[1,2,3]','[3,2,1]','[3,1,2]','错误'],'内置','排序。'],
+['[x*2 for x in [1,2,3]]',0,['[2,4,6]','[1,2,3,1,2,3]','[1,4,9]','错误'],'推导式','每个乘2。'],
+['(lambda x:x*2)(5)',0,['10','5','25','错误'],'lambda','10。'],
+['list(map(str,[1,2,3]))',0,["['1','2','3']",'[1,2,3]','[str,str,str]','错误'],'高阶','map转字符串。'],
+['"Python".find("th")',0,['2','1','3','-1'],'字符串','find查找。'],
+['"a b c".split()',0,["['a','b','c']","['a b c']",'a,b,c','错误'],'字符串','split分割。'],
+['"  hello  ".strip()',0,['hello','  hello  ','Hello','错误'],'字符串','strip去空格。'],
+['"hello world".title()',0,['Hello World','hello World','Hello world','错误'],'字符串','title首字母大写。'],
+['x=[1,2,3,4];print(x[2:])',0,['[3,4]','[1,2]','[2,3]','错误'],'切片','从索引2到末尾。'],
+['s="abcdef";print(s[::2])',0,['ace','bdf','abcdef','错误'],'切片','步长2。'],
+['d={};d["a"]=1;d["b"]=2;print("a"in d)',0,['True','False','a','错误'],'字典','in检查键。'],
+['"Python"[::-1]',0,['nohtyP','Python','P','错误'],'切片','反转字符串。'],
+['list(reversed([1,2,3]))',0,['[3,2,1]','[1,2,3]','[1,2,3]','错误'],'列表','reversed反向。'],
+['print(range(1,10,2)[2])',0,['5','3','7','错误'],'range','步长2第3个是5。'],
+['"hello".upper().isupper()',0,['True','False','Hello','错误'],'字符串','全大写判断。'],
+['d={"a":1,"b":2};d.pop("a");print(len(d))',0,['1','2','0','错误'],'字典','pop后剩1个。'],
+['divmod(10,3)',0,['(3,1)','(3.33)','(3,0)','错误'],'内置','divmod商和余数。'],
+['round(2.567,2)',0,['2.57','2.56','2.5','错误'],'内置','保留两位小数。'],
+['d={"a":1,"b":2};print(list(d.values()))',0,['[1,2]','["a","b"]','[2,1]','错误'],'字典','values获取值。'],
+['"Python".find("th")',0,['2','1','3','-1'],'字符串','find返回索引。'],
+['"123".isdigit()',0,['True','False','123','错误'],'字符串','isdigit数字。'],
+['"abc".isalpha()',0,['True','False','abc','错误'],'字符串','isalpha字母。'],
+['def f(a,b=2,c=3):return a+b+c\\nprint(f(1))',0,['6','5','4','错误'],'函数','默认参数1+2+3=6。'],
+['"a,b,c".split(",")',0,["['a','b','c']","['a,b,c']",'a,b,c','错误'],'字符串','按逗号分割。'],
+['x=[1,2];print(x*3)',0,['[1,2,1,2,1,2]','[3,6]','[1,2,3]','错误'],'列表','重复。'],
+['"abc123".isalnum()',0,['True','False','abc','错误'],'字符串','isalnum字母数字。'],
+['x=[1,2,3];print(x.pop())',0,['3','1','[1,2]','错误'],'列表','pop返回弹出值。'],
+['x=[1,2,3];x.insert(2,5);print(x)',0,['[1,2,5,3]','[1,5,2,3]','[1,2,3,5]','错误'],'列表','insert插入。'],
+['"hello".count("l")',0,['2','1','3','错误'],'字符串','count计数。'],
+['"hello".capitalize()',0,['Hello','hello','HELLO','错误'],'字符串','capitalize首字母大写。'],
+['x=[1,2,3];print(min(x))',0,['1','3','2','错误'],'内置','最小值。'],
+['x=[10,20,30];print(max(x))',0,['30','10','20','错误'],'内置','最大值。'],
+['sum([1,3,5])',0,['9','8','7','错误'],'内置','奇数和。'],
+['len(range(10))',0,['10','9','11','错误'],'range','range长度。'],
+['type(range(5))',0,["<class 'range'>","<class 'list'>","<class 'int'>",'错误'],'数据类型','range类型。'],
+['1+True',0,['2','1','True','错误'],'布尔值','True视为1。'],
+['0+False',0,['0','False','1','错误'],'布尔值','False视为0。'],
+['10/2',0,['5.0','5','2','错误'],'运算符','除法得浮点。'],
+['10+20',0,['30','1020','1020','错误'],'运算符','加法。'],
+['10-8',0,['2','18','-2','错误'],'运算符','减法。'],
+['10*10',0,['100','20','1010','错误'],'运算符','10×10=100。'],
+['100/25',0,['4.0','4','25','错误'],'运算符','100÷25=4.0。'],
+['10+20+30',0,['60','102030','50','错误'],'运算符','连续加法。'],
+['(10+20)*2',0,['60','50','1020','错误'],'运算符','括号优先。'],
+['10+20*2',0,['50','60','1020','错误'],'运算符','先乘后加。'],
+['100//30',0,['3','3.33','4','错误'],'运算符','整除。'],
+['100%30',0,['10','0','3','错误'],'运算符','100÷30余10。'],
+['x=[1,2,3];x.append(4);x.append(5);print(len(x))',0,['5','3','4','错误'],'列表','添加后长度5。'],
+['d={"a":1};d["b"]=2;d["c"]=3;print(len(d))',0,['3','2','4','错误'],'字典','3个键值对。'],
+['"hello".count("l")',0,['2','1','3','错误'],'字符串','count计数。'],
+['"".join(["a","b","c"])',0,['abc','a,b,c','a b c','错误'],'字符串','join无缝连接。'],
+['"  hello  ".lstrip()',0,['hello  ','  hello  ','hello','错误'],'字符串','lstrip左去空格。'],
+['"  hello  ".rstrip()',0,['  hello','hello  ','hello','错误'],'字符串','rstrip右去空格。'],
+['"Python".startswith("Py")',0,['True','False','Py','错误'],'字符串','startswith。'],
+['"Python".endswith("on")',0,['True','False','on','错误'],'字符串','endswith。'],
+['x=[3,1,2];x.reverse();print(x[0])',0,['2','3','1','错误'],'列表','反转后第一个。'],
+['len("ab"*3)',0,['6','3','9','错误'],'字符串','"ab"*3="ababab"长度6。'],
+['list(range(1,11))[5]',0,['6','5','7','错误'],'range','索引5是第6个元素。'],
+['list(range(0,30,5))[3]',0,['15','10','20','错误'],'range','步长5第4个是15。']];
+// r3: 高阶80题
+var r3=[
+['def f(x,*a):return x+sum(a)\\nprint(f(1,2,3,4))',0,['10','1','1234','错误'],'函数','*a可变参数和10。'],
+['[x**2 for x in range(5)]',0,['[0,1,4,9,16]','[0,1,2,3,4]','{0,1,4,9,16}','错误'],'推导式','平方。'],
+['sorted(set([1,2,2,3]))',0,['[1,2,3]','[1,2,2,3]','(1,2,3)','错误'],'集合','去重排序。'],
+['t=(1,2,3);print(t[1])',0,['2','1','3','错误'],'元组','元组索引。'],
+['isinstance(42,int)',0,['True','False','42','错误'],'内置','isinstance。'],
+['d={"a":1,"b":2};d.pop("a");print(d)',0,['{"b":2}','{"a":1}','{}','错误'],'字典','pop删除键。'],
+['list(zip([1,2],[3,4]))',0,['[(1,3),(2,4)]','[1,2,3,4]','[(1,2),(3,4)]','错误'],'zip','zip配对。'],
+['matrix=[[1,2],[3,4]];print(matrix[0][1])',0,['2','1','3','4'],'嵌套','二维索引。'],
+['any([0,0,1])',0,['True','False','0','错误'],'内置','任一为真。'],
+['all([1,2,3])',0,['True','False','3','错误'],'内置','全部为真。'],
+['list(filter(lambda x:x>2,[1,2,3,4]))',0,['[3,4]','[1,2]','[1,2,3,4]','错误'],'高阶','list(filter(...))过滤。'],
+['list(map(lambda x:x*x,[1,2,3]))',0,['[1,4,9]','[1,2,3]','[2,4,6]','错误'],'高阶','list(map(...))平方。'],
+['a={1,2,3};b={2,3,4};print(a&b)',0,['{2,3}','{1,2,3,4}','{1,4}','错误'],'集合','交集。'],
+['a={1,2,3};b={2,3,4};print(a|b)',0,['{1,2,3,4}','{2,3}','{1,4}','错误'],'集合','并集。'],
+['"Python"[::2]',0,['Pto','yhn','Python','错误'],'切片','步长2。'],
+['all([])',0,['True','False','None','错误'],'内置','空all为真。'],
+['any([])',1,['False','True','None','错误'],'内置','空any为假。'],
+['2**3**2',0,['512','64','36','12'],'运算符','右结合512。'],
+['[x for x in range(10) if x%2==0]',0,['[0,2,4,6,8]','[1,3,5,7,9]','[0,2,4,6,8,10]','错误'],'推导式','筛选偶数。'],
+['t=(1,2,3);a,b,c=t;print(a+b+c)',0,['6','1','3','错误'],'解包','1+2+3=6。'],
+['a,*b,c=[1,2,3,4,5];print(b)',0,['[2,3,4]','[2,3]','[1,2,3,4]','错误'],'解包','星号取中间。'],
+['list(dict.fromkeys([1,2,2,3]))',0,['[1,2,3]','[1,2,2,3]','[1,2]','错误'],'字典','fromkeys去重。'],
+['oct(8)',0,['0o10','0o8','8','10'],'内置','八进制。'],
+['hex(16)',0,['0x10','0x16','16','0x1'],'内置','十六进制。'],
+['bin(5)',0,['0b101','0b5','101','0b1010'],'内置','二进制。'],
+['int("101",2)',0,['5','101','3','错误'],'内置','二进制转十进制。'],
+['eval("3+5*2")',0,['13','16','"3+5*2"','错误'],'内置','eval运算。'],
+['sorted([-3,2,-1,0],key=abs)',0,['[0,-1,2,-3]','[-3,-1,0,2]','[0,1,2,3]','错误'],'排序','按绝对值排。'],
+['list(range(1,11,3))',0,['[1,4,7,10]','[1,3,5,7,9]','[1,4,7]','错误'],'range','步长3。'],
+['a={1,2,3};a.add(4);print(4 in a)',0,['True','False','4','错误'],'集合','add添加。'],
+['a={1,2,3};a.discard(2);print(2 in a)',1,['False','True','2','错误'],'集合','discard移除。'],
+['filter(None,[0,1,"",2])',0,['[1,2]','[0,1,2]','[1,"",2]','错误'],'高阶','filter去假值。'],
+['map(len,["hi","hello"])',0,['[2,5]','["hi","hello"]','[2,"hello"]','错误'],'高阶','map求长度。'],
+['[1,2,3]*3',0,['[1,2,3,1,2,3,1,2,3]','[3,6,9]','[1,2,3,3]','错误'],'运算','重复。'],
+['isinstance("hi",str)',0,['True','False','hi','错误'],'内置','isinstance字符串。'],
+['True+False',0,['1','0','True','错误'],'布尔值','1+0=1。'],
+['1<<2',0,['4','2','8','错误'],'运算符','左移。'],
+['8>>2',0,['2','4','0','错误'],'运算符','右移。'],
+['5&3',0,['1','7','5','错误'],'运算符','位与。'],
+['5|3',0,['7','1','5','错误'],'运算符','位或。'],
+['5^3',0,['6','2','7','错误'],'运算符','异或。'],
+['~5',0,['-6','-5','4','错误'],'运算符','取反。'],
+['3<2<1',1,['False','True','2','错误'],'比较','链式比较。'],
+['1<2<3',0,['True','False','2','错误'],'比较','链式比较为真。'],
+['range(10)[-1]',0,['9','0','10','错误'],'range','负索引。'],
+['list(zip([1,2,3],"abc"))',0,['[(1,"a"),(2,"b"),(3,"c")]','[1,2,3,"a","b","c"]','[1,"a",2,"b"]','错误'],'zip','zip配对。'],
+['bin(10)',0,['0b1010','0b10','0b1000','错误'],'内置','10的二进制。'],
+['int("ff",16)',0,['255','256','15','错误'],'内置','十六进制转十进制。'],
+['"Python".find("java")',0,['-1','0','1','None'],'字符串','找不到-1。'],
+['abs(-3.5)',0,['3.5','-3.5','3','错误'],'内置','浮点绝对值。'],
+['pow(2,10)',0,['1024','100','20','错误'],'内置','2^10=1024。'],
+['round(3.14159,3)',0,['3.142','3.141','3.14','错误'],'内置','保留3位小数。'],
+['"{:.2f}".format(3.14159)',0,['3.14','3.142','3.1','错误'],'字符串','format保留2位。'],
+['type(42)is int',0,['True','False','42','错误'],'内置','is类型判断。'],
+['{1,2,3}.symmetric_difference({3,4,5})',0,['{1,2,4,5}','{1,2}','{4,5}','错误'],'集合','对称差集。'],
+['"@".join(["a","b"])',0,['a@b','@ab','ab@','错误'],'字符串','自定义分隔符。'],
+['list(enumerate(["a","b","c"]))[0]',0,['(0,"a")','(1,"b")','(0,"b")','错误'],'内置','enumerate索引值。'],
+['all([1,2,0])',1,['False','True','0','错误'],'内置','0为all假。'],
+['any([0,"",None])',1,['False','True','None','错误'],'内置','全部假值any假。'],
+['[1,2,3,4][::2]',0,['[1,3]','[2,4]','[1,2,3,4]','错误'],'切片','步长2隔位取。'],
+['set([1,2,2,3,3,3])',0,['{1,2,3}','[1,2,3]','{1,2,2,3,3,3}','错误'],'集合','set去重。'],
+['"{1}+{0}={2}".format(2,3,5)',0,['3+2=5','2+3=5','5+2=3','错误'],'字符串','format位置参数。'],
+['True+False',0,['1','0','True','错误'],'布尔值','1+0=1。'],
+['int("77",8)',0,['63','56','77','错误'],'内置','八进制转十进制。'],
+['[x+y for x in [1,2] for y in [10,20]]',0,['[11,21,12,22]','[11,12,21,22]','[1,2,10,20]','错误'],'推导式','嵌套推导式。'],
+['list(range(10,0,-2))',0,['[10,8,6,4,2]','[10,8,6,4,2,0]','[10,9,8]','错误'],'range','递减步长。'],
+['frozenset([1,2,2,3])',0,["frozenset({1,2,3})","{1,2,3}",'[1,2,3]','错误'],'集合','frozenset不可变。'],
+['repr("hello")',0,["'hello'",'"hello"','hello','错误'],'内置','repr带引号。'],
+['int.__base__',0,["<class 'object'>","<class 'int'>","int",'错误'],'内置','__base__基类。'],
+['{"a":1,"b":2}.get("c","NA")',0,['NA','None','c','错误'],'字典','get默认值。'],
+['[n for n in range(20) if n%3==0][2]',0,['6','3','9','错误'],'推导式','第3个3倍数。'],
+['list(zip([1,2,3],"abc"))',0,['[(1,"a"),(2,"b"),(3,"c")]','[1,2,3,"a","b","c"]','[1,"a",2,"b"]','错误'],'zip','zip配对。']];
+
+// 合并所有题库
+var ra=[].concat(r0).concat(r1).concat(r2).concat(r3);
+var qd=[];
+for(var i=0;i<ra.length;i++){
+  var r=ra[i];
+  var lv=i<80?'入门':i<160?'基础':i<240?'进阶':'高阶';
+  qd.push(_q(r[0],r[1],r[2],r[3],lv,r[4]));
+}
+
+var ql='入门',qq=[],qj=0,qd2=false;
+function iq(){var h='';LV.forEach(function(n){h+='<button class="level-btn '+(n===ql?'active':'')+'" onclick="ql=\''+n+'\';iq()">'+n+'<span class="lv-cnt">'+qd.filter(function(d){return d.l===n}).length+'题</span></button>'});$('qls').innerHTML=h;qr()}
+function qr(){var p=qd.filter(function(d){return d.l===ql&&!qDone[qd.indexOf(d)]});if(!p.length){p=qd.filter(function(d){return d.l===ql})}if(!p.length){ts('暂无题目','error');return}qq=sh([].concat(p)).slice(0,100);qj=0;qd2=false;rq();ts('已抽'+qq.length+'题','info')}
+function rq(){if(!qq.length){qr();return}var q=qq[qj];var os=[].concat(q.o);var av=q.o[q.a];sh(os);var na=os.indexOf(av);$('qtg').innerHTML='<span class="tag tag-type">📌'+q.t+'</span><span class="tag tag-level">📊'+q.l+'</span>';$('qq').textContent='第'+(qj+1)+'/'+qq.length+'题：以下代码输出什么？';$('qc').textContent=q.c;$('qos').innerHTML=os.map(function(o,i){return '<div class="quiz-opt" data-a="'+(i===na?1:0)+'" onclick="qs(this,'+i+')"><span class="opt-label">'+'ABCD'[i]+'</span> '+eh(o)+'</div>'}).join('');$('qfb').className='quiz-feedback';$('qfb').innerHTML='';$('qnb').style.display='none';qd2=false;$('qp').textContent=(qj+1)+'/'+qq.length+' 题';dt('qdt',qq.length,qj)}
+function qs(el,i){if(qd2)return;qd2=true;var q=qq[qj];var ok=parseInt(el.dataset.a)===1;var qo=qe('#qos .quiz-opt');for(var j=0;j<qo.length;j++){var e=qo[j];e.style.pointerEvents='none';if(parseInt(e.dataset.a)===1)e.classList.add('correct');else if(parseInt(e.dataset.a)!==1&&e===el)e.classList.add('wrong')}var fb=$('qfb');fb.className='quiz-feedback '+(ok?'correct':'wrong')+' show';fb.innerHTML=ok?'✅ 正确！':'❌ 不对哦！';if(q.exp){fb.innerHTML+='<div class="fb-exp"><div class="fb-e-t">📖 知识点解析</div>'+eh(q.exp)+'</div>'}fb.innerHTML+='<div class="fb-xp">+'+(ok?10:0)+' XP</div>';rc(ok);if(ok){ax(10);markDone('q',qd.indexOf(q));rw('q',qd.indexOf(q));if(qq.length===1&&!ws.length){st('wrong');return}}else aw('q',qd.indexOf(q),'');ud('qdt',qj,ok);$('qnb').style.display='inline-flex'}
+function qn(){if(rdi>=0){rdNext();return}qj=(qj+1)%qq.length;rq()}
+
+var fd=[{c:'10 * 3',o:['+','-','*','/'],a:'+',q:'补全加法',t:'运算符',l:'入门'},{c:'2 * 3',o:['**','*','^','//'],a:'**',q:'补全幂运算',t:'运算符',l:'入门'},{c:'* math',o:['import','include','from','using'],a:'import',q:'补全导入',t:'模块',l:'入门'},{c:'for i * range(5):',o:['in','of','from','to'],a:'in',q:'补全 for in',t:'循环',l:'基础'},{c:'nums.*(4)',o:['append','add','push','insert'],a:'append',q:'补全添加',t:'列表',l:'基础'},{c:'s.*()',o:['upper','lower','title','capitalize'],a:'upper',q:'补全大写',t:'字符串',l:'基础'},{c:'s.*()',o:['lower','upper','title','capitalize'],a:'lower',q:'补全小写',t:'字符串',l:'基础'},{c:'* x>5:',o:['if','for','while','def'],a:'if',q:'补全 if',t:'语法',l:'基础'},{c:'x>0 * y>0',o:['and','or','not','&&'],a:'and',q:'补全逻辑与',t:'逻辑',l:'基础'},{c:'if i==5:*',o:['break','continue','pass','exit'],a:'break',q:'补全跳出',t:'循环',l:'基础'},{c:'except *:',o:['ZeroDivisionError','ValueError','Error','Exception'],a:'ZeroDivisionError',q:'补全异常',t:'异常',l:'进阶'},{c:'d.*("b",0)',o:['get','pop','remove','fetch'],a:'get',q:'补全get',t:'字典',l:'进阶'},{c:'d.*()',o:['keys','values','items','key'],a:'keys',q:'补全keys',t:'字典',l:'进阶'},{c:'nums.*(2)',o:['remove','pop','delete','splice'],a:'remove',q:'补全remove',t:'列表',l:'进阶'},{c:'double=* x:x*2',o:['lambda','def','fn','function'],a:'lambda',q:'补全lambda',t:'lambda',l:'进阶'},{c:'*([1,2],["a","b"])',o:['zip','map','filter','enumerate'],a:'zip',q:'补全zip',t:'内置',l:'高阶'},{c:'a * b (交集)',o:['&','|','-','^'],a:'&',q:'补全交集',t:'集合',l:'高阶'},{c:'*(42,int)',o:['isinstance','type','class','issubclass'],a:'isinstance',q:'补全isinstance',t:'内置',l:'高阶'}];
+var fl='入门',fq=[],fj=0,fd2=false,fs2=null;
+function fi(){var h='';LV.forEach(function(n){h+='<button class="level-btn '+(n===fl?'active':'')+'" onclick="fl=\''+n+'\';fi()">'+n+'<span class="lv-cnt">'+fd.filter(function(d){return d.l===n}).length+'题</span></button>'});$('fls').innerHTML=h;fr()}
+function fr(){var p=fd.filter(function(d){return d.l===fl});if(!p.length){ts('暂无题目','error');return}fq=sh([].concat(p)).slice(0,100);fj=0;fd2=false;fs2=null;rf();ts('已抽'+fq.length+'题','info')}
+function rf(){if(!fq.length){fr();return}var f=fq[fj];var ps=f.c.split('*');$('ftg').innerHTML='<span class="tag tag-type">📌'+f.t+'</span><span class="tag tag-level">📊'+f.l+'</span>';$('fq').textContent='第'+(fj+1)+'/'+fq.length+'题：'+f.q;$('fc').innerHTML=ps.map(function(p,i){var h=eh(p);if(i<ps.length-1)h+='<span class="blank-slot" id="fsk" onclick="fc3()">?</span>';return h}).join('');$('fop').innerHTML=f.o.map(function(o){return '<div class="blank-opt" onclick="fp(this)">'+eh(o)+'</div>'}).join('');$('fsb').style.display='block';$('fsb').disabled=false;$('fnb').style.display='none';$('ffb').className='quiz-feedback';$('ffb').innerHTML='';fd2=false;fs2=null;$('fp').textContent=(fj+1)+'/'+fq.length+' 题';dt('fdt',fq.length,fj)}
+function fc3(){if(fd2)return;var s=$('fsk');if(s&&s.textContent!=='?'){s.textContent='?';s.className='blank-slot';fs2=null;var el=qe('#fop .blank-opt');for(var k=0;k<el.length;k++)el[k].classList.remove('selected')}}
+function fp(el){if(fd2)return;var e2=qe('#fop .blank-opt');for(var k=0;k<e2.length;k++)e2[k].classList.remove('selected');el.classList.add('selected');var s=$('fsk');if(s){s.textContent=el.textContent;s.className='blank-slot filled'}fs2=el.textContent}
+function fc2(){if(!fs2){ts('请选择答案！','error');return}if(fd2)return;fd2=true;var f=fq[fj];var s=$('fsk');$('fsb').disabled=true;var e2=qe('#fop .blank-opt');for(var k=0;k<e2.length;k++)e2[k].style.pointerEvents='none';var ok=fs2===f.a;if(s)s.className='blank-slot '+(ok?'filled':'wrong');var fb=$('ffb');fb.className='quiz-feedback '+(ok?'correct':'wrong')+' show';fb.innerHTML=ok?'✅ 正确！':'❌ 不对！答案是 "'+eh(f.a)+'"';fb.innerHTML+='<div class="fb-xp">+'+(ok?10:0)+' XP</div>';rc(ok);if(ok){ax(10);rw('f',fd.indexOf(f));if(fq.length===1&&!ws.length){st('wrong');return}}else aw('f',fd.indexOf(f),'');ud('fdt',fj,ok);$('fnb').style.display='inline-flex'}
+function fn(){if(rdi>=0){rdNext();return}fj=(fj+1)%fq.length;rf()}
+var md=[{c:'print()',d:'输出到控制台',l:'入门'},{c:'len()',d:'获取长度',l:'入门'},{c:'type()',d:'获取类型',l:'入门'},{c:'int()',d:'转整数',l:'入门'},{c:'str()',d:'转字符串',l:'入门'},{c:'list()',d:'创建列表',l:'入门'},{c:'range()',d:'数字序列',l:'入门'},{c:'max()',d:'最大值',l:'基础'},{c:'min()',d:'最小值',l:'基础'},{c:'sum()',d:'求和',l:'基础'},{c:'abs()',d:'绝对值',l:'基础'},{c:'pop()',d:'弹出元素',l:'基础'},{c:'sort()',d:'列表排序',l:'基础'},{c:'append()',d:'添加元素',l:'基础'},{c:'split()',d:'分割字符串',l:'进阶'},{c:'join()',d:'合并字符串',l:'进阶'},{c:'replace()',d:'替换子串',l:'进阶'},{c:'upper()',d:'转大写',l:'进阶'},{c:'lower()',d:'转小写',l:'进阶'},{c:'map()',d:'元素运算',l:'进阶'},{c:'sorted()',d:'排序新列表',l:'进阶'},{c:'enumerate()',d:'索引+值',l:'高阶'},{c:'zip()',d:'合并序列',l:'高阶'},{c:'any()',d:'任一为真',l:'高阶'},{c:'all()',d:'全部为真',l:'高阶'},{c:'set()',d:'创建集合',l:'高阶'},{c:'dict()',d:'创建字典',l:'高阶'},{c:'reversed()',d:'反向迭代',l:'高阶'}];var ml='入门',mp2=[],mi2=[],ms2=null;
+function im(){var h='';LV.forEach(function(n){h+='<button class="level-btn '+(n===ml?'active':'')+'" onclick="ml=\''+n+'\';im()">'+n+'<span class="lv-cnt">'+md.filter(function(d){return d.l===n}).length+'组</span></button>'});$('mls').innerHTML=h;mr()}
+function mr(){var p=md.filter(function(m){return m.l===ml});if(p.length<3){ts('配对数据不足','error');return}mp2=sh([].concat(p)).slice(0,10);ms2=null;var cs=mp2.map(function(m,i){return{id:'c'+i,ty:'c',tx:m.c,pr:i}});var ds=mp2.map(function(m,i){return{id:'d'+i,ty:'d',tx:m.d,pr:i}});mi2=sh([].concat(cs,ds));rm2();ts('已洗牌','info')}
+function rm2(){var mt=mp2.filter(function(m){return m._m}).length;var cs=mi2.filter(function(i){return i.ty==='c'});var ds=mi2.filter(function(i){return i.ty==='d'});$('mp2').textContent='已配对:'+mt+'/'+mp2.length;$('ma').innerHTML='<div class="match-col"><div class="match-col-label">💻 代码</div>'+cs.map(function(item){var m=mp2[item.pr];if(m._m)return'<div class="match-card matched">'+eh(item.tx)+'</div>';var sel=ms2&&ms2.id===item.id?' selected':'';return'<div class="match-card'+sel+'" data-id="'+item.id+'" data-pr="'+item.pr+'" data-ty="'+item.ty+'" onclick="mc(this)">'+eh(item.tx)+'</div>'}).join('')+'</div><div class="match-col"><div class="match-col-label">📝 描述</div>'+ds.map(function(item){var m=mp2[item.pr];if(m._m)return'<div class="match-card matched">'+eh(item.tx)+'</div>';var sel=ms2&&ms2.id===item.id?' selected':'';return'<div class="match-card'+sel+'" data-id="'+item.id+'" data-pr="'+item.pr+'" data-ty="'+item.ty+'" onclick="mc(this)">'+eh(item.tx)+'</div>'}).join('')+'</div>';if(mt===mp2.length){ts('🎉全部配对完成！','success');ax(30)}}
+function mc(el){if(el.classList.contains('matched'))return;var pr=parseInt(el.dataset.pr),ty=el.dataset.ty;if(!ms2){document.querySelectorAll('.match-card').forEach(function(c){c.classList.remove('selected')});el.classList.add('selected');ms2={id:el.dataset.id,pr:pr,ty:ty,el:el};return}if(ms2.id===el.dataset.id){el.classList.remove('selected');ms2=null;return}var prev=ms2;ms2=null;document.querySelectorAll('.match-card').forEach(function(c){c.classList.remove('selected')});if(prev.pr===pr&&prev.ty!==ty){mp2[prev.pr]._m=true;mp2[pr]._m=true;rm2()}else{el.classList.add('wrong-anim');prev.el.classList.add('wrong-anim');setTimeout(function(){el.classList.remove('wrong-anim');prev.el.classList.remove('wrong-anim')},300)}}
+var xd=[{e:'print("Hello World)',c:'print("Hello World")',h:'缺少闭合引号',t:'语法',l:'入门'},{e:'if x = 5:',c:'if x == 5:',h:'判断用==',t:'比较',l:'入门'},{e:'print(5 + "3")',c:'print(5 + int("3"))',h:'整数和字符串不能直接加',t:'类型',l:'基础'},{e:'def add(a, b)\\n    return a+b',c:'def add(a, b):\\n    return a+b',h:'定义缺冒号',t:'语法',l:'基础'},{e:'for i range(5):\\n    print(i)',c:'for i in range(5):\\n    print(i)',h:'缺少in',t:'语法',l:'基础'},{e:'if x > 5\\n    print("大")',c:'if x > 5:\\n    print("大")',h:'if缺冒号',t:'语法',l:'入门'},{e:'print("值为" + 42)',c:'print("值为" + str(42))',h:'需str()',t:'类型',l:'基础'},{e:'nums = [3,1,2]\\nnums.sort\\nprint(nums)',c:'nums = [3,1,2]\\nnums.sort()\\nprint(nums)',h:'方法缺括号',t:'语法',l:'基础'},{e:'a = [1,2,3]\\nb = a\\nb.append(4)\\nprint(a)',c:'a = [1,2,3]\\nb = a.copy()\\nb.append(4)\\nprint(a)',h:'需copy()',t:'引用',l:'进阶'},{e:'d = {"a": 1}\\nprint(d["b"])',c:'d = {"a": 1}\\nprint(d.get("b", 0))',h:'用get',t:'字典',l:'进阶'},{e:'s = "hello"\\ns[0] = "H"',c:'s = "hello"\\ns = "H" + s[1:]',h:'字符串不可变',t:'类型',l:'进阶'},{e:'x = 10\\nprint("值:" + x)',c:'x = 10\\nprint("值:" + str(x))',h:'需str()',t:'类型',l:'基础'}];var xl='入门',xq2=[],xj=0,xd2=false;
+function ix(){var h='';LV.forEach(function(n){h+='<button class="level-btn '+(n===xl?'active':'')+'" onclick="xl=\''+n+'\';ix()">'+n+'<span class="lv-cnt">'+xd.filter(function(d){return d.l===n}).length+'题</span></button>'});$('xls').innerHTML=h;xr()}
+function xr(){var p=xd.filter(function(d){return d.l===xl});if(!p.length){ts('暂无题目','error');return}xq2=sh([].concat(p)).slice(0,100);xj=0;xd2=false;rx();ts('已抽'+xq2.length+'题','info')}
+function rx(){if(!xq2.length){xr();return}var f=xq2[xj];$('xtg').innerHTML='<span class="tag tag-type">📌'+f.t+'</span><span class="tag tag-level">📊'+f.l+'</span>';$('xq').textContent='第'+(xj+1)+'/'+xq2.length+'题：请修正代码中的错误';$('xc').innerHTML='<pre style="margin:0;font-family:inherit;font-size:inherit;line-height:1.6">'+eh(f.e)+'</pre>';$('xi').value='';$('xsb').style.display='block';$('xsb').disabled=false;$('xnb').style.display='none';$('xfb').className='quiz-feedback';$('xfb').innerHTML='';xd2=false;$('xp2').textContent=(xj+1)+'/'+xq2.length+' 题';dt('xdt',xq2.length,xj);$('xi').focus()}
+function xc2(){if(xd2)return;var v=$('xi').value.trim();if(!v){ts('请输入修正后的代码！','error');return}xd2=true;var f=xq2[xj];var fc=f.c.replace(/\s+/g,'').trim();var vc=v.replace(/\s+/g,'').trim();var ok=vc===fc;$('xfb').className='quiz-feedback '+(ok?'correct':'wrong')+' show';$('xfb').innerHTML=ok?'✅ 修正正确！':'❌ 不对～<div class="fb-exp" style="margin-top:4px;font-size:11px">💡 '+eh(f.h)+'<br>✅ 正确代码：<br>'+eh(f.c)+'</div>';$('xsb').disabled=true;rc(ok);if(ok){ax(15);rw('x',xd.indexOf(f))}else aw('x',xd.indexOf(f),'');ud('xdt',xj,ok);$('xnb').style.display='inline-flex'}
+function xn(){if(rdi>=0){rdNext();return}xj=(xj+1)%xq2.length;rx()}var rdi=-1;
+function rw2(){var list=$('wl');$('cwb').style.display=ws.length?'block':'none';if(!ws.length){list.innerHTML='<div class="empty-state"><span class="empty-icon">🎉</span><p>暂无错题，继续保持！</p></div>';return}list.innerHTML=ws.map(function(w,i){var t='',d='';if(w.t==='q'){var q=qd[w.i];if(!q)return'';t='[闯关] '+q.c.substring(0,35);d=q.t}else if(w.t==='f'){var f=fd[w.i];if(!f)return'';t='[填空] '+f.q;d=f.t}else if(w.t==='x'){var f2=xd[w.i];if(!f2)return'';t='[纠错] '+f2.e.substring(0,35);d=f2.t}else return'';return '<div class="wrong-item" onclick="rd('+i+')"><div class="wi-title">'+eh(t)+'</div><div class="wi-meta">'+eh(d)+'</div><span class="wi-badge">重做</span></div>'}).join('')}
+function rd(i){rdi=i;var w=ws[i];if(!w)return;if(w.t==='q'){var q=qd[w.i];if(q){ql=q.l;iq();st('quiz');qq=[q];qj=0;qd2=false;rq();ts('📕重做错题 '+(i+1)+'/'+ws.length,'info')}}else if(w.t==='f'){var f=fd[w.i];if(f){fl=f.l;fi();st('fill');fq=[f];fj=0;fd2=false;fs2=null;rf();ts('📕重做错题 '+(i+1)+'/'+ws.length,'info')}}else if(w.t==='x'){var f2=xd[w.i];if(f2){xl=f2.l;ix();st('fix');xq2=[f2];xj=0;xd2=false;rx();ts('📕重做错题 '+(i+1)+'/'+ws.length,'info')}}}
+function rdNext(){if(rdi<0)return;var i=rdi+1;while(i<ws.length){var w=ws[i];if(!w){i++;continue}rdi=i;if(w.t==='q'){var q=qd[w.i];if(q){ql=q.l;iq();st('quiz');qq=[q];qj=0;qd2=false;rq();ts('📕重做错题 '+(i+1)+'/'+ws.length,'info');return}}else if(w.t==='f'){var f=fd[w.i];if(f){fl=f.l;fi();st('fill');fq=[f];fj=0;fd2=false;fs2=null;rf();ts('📕重做错题 '+(i+1)+'/'+ws.length,'info');return}}else if(w.t==='x'){var f2=xd[w.i];if(f2){xl=f2.l;ix();st('fix');xq2=[f2];xj=0;xd2=false;rx();ts('📕重做错题 '+(i+1)+'/'+ws.length,'info');return}}i++}rdi=-1;st('wrong');toast('🎉 错题已全部重做！','success')}
+(function(){up();iq();fi();im();ix();rw2()})();
+</script></body></html>
